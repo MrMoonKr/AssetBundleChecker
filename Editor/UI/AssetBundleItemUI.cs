@@ -84,12 +84,39 @@ namespace UTJ
                 var field = new ObjectField();
 #endif
                 field.allowSceneObjects = true;
-                loadObjectBody.Add(field);
+                //loadObjectBody.Add(field);
                 field.objectType = abObject.GetType();
                 field.value = abObject;
+
+                Button btnTemp = new Button() { text = "..." };
+                btnTemp.clicked += () => { 
+                    EditorUtility.DisplayDialog( "타이틀", "메시지 : " + abObject.name, "닫기" ); 
+                    //AssetDatabase.CreateAsset( abObject, abObject.name + ".asset" );
+
+                    //string path = EditorUtility.SaveFilePanel( "", "Assets/" , abObject.name, "asset" );
+                    string path = "Assets/" + abObject.name + ".asset";
+                    if ( string.IsNullOrEmpty( path ) )
+                    {
+                        return;
+                    }
+                    //path = FileUtil.GetProjectRelativePath( path );
+                    System.Type type = abObject.GetType();
+                    AudioClip clone = (AudioClip)Object.Instantiate( abObject ) ;
+
+                    AssetDatabase.CreateAsset( clone, path );
+                    AssetDatabase.SaveAssets();
+                } ;
+
+                VisualElement node = new VisualElement() ;
+                node.style.flexDirection = new StyleEnum<FlexDirection>( FlexDirection.Row );
+                node.Add( field );
+                node.Add( btnTemp );
+
+                loadObjectBody.Add( node );
             }
 
             // instanciate...
+            /*
             var instanciateBody = this.element.Q<VisualElement>("MaterialChangeBody");
             instanciateObjects = new List<InstanciateGameObjectFromAb>();
             foreach (var abObject in assetBundleObjects)
@@ -102,11 +129,14 @@ namespace UTJ
                 var instanceUI = new InstanciateGameObjectUI(instanciateObject);
                 instanceUI.AddToParent(instanciateBody);
             }
+            //*/
 
             // advanced 
+            /*
             advancedFold = this.element.Q<Foldout>("Advanced");
             var advancedBody = new IMGUIContainer(OnAdvancedGUI);
             advancedFold.Add(advancedBody);
+            //*/
 
             // Close Btn
 
